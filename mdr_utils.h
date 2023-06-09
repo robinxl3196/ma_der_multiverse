@@ -1,14 +1,8 @@
 #ifndef _MDR_UTILS_H_
 #define _MDR_UTILS_H_
 
-/* u8, u16, ... */
-#include <linux/types.h>
-/* ntohs, ntohl ... */
-#include <linux/byteorder/generic.h>
-
 #include <linux/preempt.h>
 #include <linux/slab.h>
-#include <linux/types.h>
 
 /// @brief      Wrap function for malloc in kernel space
 /// @param size The size of requested memory space

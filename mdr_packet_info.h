@@ -22,7 +22,7 @@ struct internet_info
     u8 src_ip[IP_ADDR_LEN];
     u8 dst_ip[IP_ADDR_LEN];
     u8 protocol;
-    u8 padding[3];
+    u8 padding[7];
 };
 
 struct transport_info
@@ -43,8 +43,9 @@ struct packet_info
     struct internet_info  inter_info;
     struct transport_info trans_info;
 
-    u32 payload_len;
     char *payload;
+    u32 payload_len;
+    u8 padding[4];
 };
 
 enum DECODE_PACKET_RESULT
