@@ -29,6 +29,12 @@ struct transport_info
 {
     u16 src_port;
     u16 dst_port;
+    u8 syn: 1;
+    u8 rst: 1;
+    u8 ack: 1;
+    u8 fin: 1;
+    u8 unused_bits: 4;
+    u8 padding[3];
 };
 
 struct packet_info

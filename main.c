@@ -13,7 +13,6 @@ static unsigned int br_forward_hook_func(void *priv, struct sk_buff *skb, const 
     struct packet_info pkt_info;
     unsigned char *skb_mac, *skb_tail;
     int result;
-    u8 one_ip[4] = {1, 1, 1, 1};
 
     /*
         skb->len        := linear + non-linear
@@ -33,25 +32,6 @@ static unsigned int br_forward_hook_func(void *priv, struct sk_buff *skb, const 
     if (result != DECODE_SUCCESS)
     {
         goto FINALLY;
-    }
-
-    if (memcmp(pkt_info.inter_info.src_ip, one_ip, 4) == 0 ||
-        memcmp(pkt_info.inter_info.dst_ip, one_ip, 4) == 0)
-    {
-        pr_info("mac_src:%02X%02X%02X%02X%02X%02X -> dst_src:%02X%02X%02X%02X%02X%02X\n"
-                "    ip_src:%u.%u.%u.%u -> ip_dst: %u.%u.%u.%u\n"
-                "        port_src:%u -> port_dst:%u\n",
-                pkt_info.ether_info.src_mac[0], pkt_info.ether_info.src_mac[1],
-                pkt_info.ether_info.src_mac[2], pkt_info.ether_info.src_mac[3],
-                pkt_info.ether_info.src_mac[4], pkt_info.ether_info.src_mac[5],
-                pkt_info.ether_info.dst_mac[0], pkt_info.ether_info.dst_mac[1],
-                pkt_info.ether_info.dst_mac[2], pkt_info.ether_info.dst_mac[3],
-                pkt_info.ether_info.dst_mac[4], pkt_info.ether_info.dst_mac[5],
-                pkt_info.inter_info.src_ip[0], pkt_info.inter_info.src_ip[1],
-                pkt_info.inter_info.src_ip[2], pkt_info.inter_info.src_ip[3],
-                pkt_info.inter_info.dst_ip[0], pkt_info.inter_info.dst_ip[1],
-                pkt_info.inter_info.dst_ip[2], pkt_info.inter_info.dst_ip[3],
-                pkt_info.trans_info.src_port, pkt_info.trans_info.dst_port);
     }
 
 FINALLY:

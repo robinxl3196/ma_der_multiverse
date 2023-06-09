@@ -132,6 +132,12 @@ static u32 decode_tcp(struct transport_info *trans_info, unsigned char *data, u3
     trans_info->src_port = ntohs(*(u16*)data);
     trans_info->dst_port = ntohs(*(u16*)(data + 2));
 
+    // shift (>>) is prior than bitwise and (&)
+    trans_info->fin = data[13] >> 0 & 1;
+    trans_info->syn = data[13] >> 1 & 1;
+    trans_info->rst = data[13] >> 2 & 1;
+    trans_info->ack = data[13] >> 4 & 1;
+
     // check header length
     if ((data[12] >> 4) * 4 > data_len)
     {
