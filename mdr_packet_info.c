@@ -210,3 +210,18 @@ int mdr_decode_packet(struct packet_info *pkt_info, unsigned char *data, u32 dat
 FINALLY:
     return ret;
 }
+
+struct packet_raw_data *mdr_gen_pkt_raw_data(unsigned char *data, u32 data_len)
+{
+    struct packet_raw_data *pkt_raw = mdr_malloc(sizeof(struct packet_raw_data) + data_len);
+
+    if (pkt_raw)
+    {
+        memset(pkt_raw, 0, sizeof(struct packet_raw_data));
+        INIT_LIST_HEAD(&pkt_raw->list_node);
+        pkt_raw->pkt_data_len = data_len;
+        memcpy(pkt_raw->pkt_data, data, data_len);
+    }
+
+    return pkt_raw;
+}

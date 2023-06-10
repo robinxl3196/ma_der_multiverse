@@ -1,10 +1,9 @@
 #ifndef _MDR_PACKET_INFO_H_
 #define _MDR_PACKET_INFO_H_
 
+#include <linux/list.h>
 #include "mdr_utils.h"
 
-#define MAC_ADDR_LEN    6
-#define IP_ADDR_LEN     4
 
 /* Forward declaration */
 struct sk_buff;
@@ -48,6 +47,15 @@ struct packet_info
     u8 padding[4];
 };
 
+/* Use to buffer a whole packet from L2 to L7 */
+struct packet_raw_data
+{
+    struct list_head list_node;
+    u32 pkt_data_len;
+    u8 padding[4];
+    u8 pkt_data[];
+};
+
 enum DECODE_PACKET_RESULT
 {
     DECODE_ETHERNET_FAILED  = -1,
@@ -62,5 +70,11 @@ enum DECODE_PACKET_RESULT
 /// @param data_len     Legnth of data
 /// @return             DECODE_PACKET_RESULT
 int mdr_decode_packet(struct packet_info *pkt_info, unsigned char *data, u32 data_len);
+
+/// @brief              Generate a packet_raw_data object to buffer target data
+/// @param data         Data to be buffered
+/// @param data_len     Length of data
+/// @return             Pointer to the packet_raw_data object, or NULL otherwise
+struct packet_raw_data * mdr_gen_pkt_raw_data(unsigned char *data, u32 data_len);
 
 #endif /* _MDR_PACKET_INFO_H_ */

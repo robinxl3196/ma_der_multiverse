@@ -4,6 +4,10 @@
 #include <linux/preempt.h>
 #include <linux/slab.h>
 
+#define MAC_ADDR_LEN    6
+#define IP_ADDR_LEN     4
+#define IP6_ADDR_LEN    16
+
 /// @brief      Wrap function for malloc in kernel space
 /// @param size The size of requested memory space
 /// @return     NULL if failed
