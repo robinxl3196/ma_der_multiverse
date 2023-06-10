@@ -3,7 +3,7 @@ CURRENT_DIR := $(shell pwd)
 MODULE_NAME := ma_der
 
 obj-m := $(MODULE_NAME).o
-$(MODULE_NAME)-objs += main.o mdr_packet_info.o
+$(MODULE_NAME)-objs += main.o mdr_packet_info.o mdr_flow.o
 
 all:
 	make -C $(KERNEL_PATH) M=$(CURRENT_DIR) modules
