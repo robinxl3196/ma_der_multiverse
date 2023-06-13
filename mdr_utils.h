@@ -3,10 +3,14 @@
 
 #include <linux/preempt.h>
 #include <linux/slab.h>
+#include <linux/jiffies.h>
 
 #define MAC_ADDR_LEN    6
 #define IP_ADDR_LEN     4
 #define IP6_ADDR_LEN    16
+
+#define SUCCESS 0
+#define FAILURE 1
 
 /// @brief      Wrap function for malloc in kernel space
 /// @param size The size of requested memory space
@@ -21,6 +25,13 @@ static inline void* mdr_malloc(u32 size)
 static inline void mdr_free(void *ptr)
 {
     kfree(ptr);
+}
+
+/// @brief      Get current millisecond
+/// @return     Millisecond since boot up
+static inline u32 get_current_msecs(void)
+{
+    return jiffies_to_msecs(jiffies - INITIAL_JIFFIES);
 }
 
 #endif /* _MDR_UTILS_H_ */
