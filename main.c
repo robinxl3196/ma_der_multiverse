@@ -5,6 +5,8 @@
 #include <uapi/linux/netfilter_bridge.h>
 
 #include "mdr_packet_info.h"
+#include "mdr_flow.h"
+#include "mdr_flow_table.h"
 
 /* This module was developed in kernel version 5.15.0 */
 
@@ -54,20 +56,28 @@ static int __init ma_der_init(void)
     int res = 0;
     pr_info("[%s] Enter\n", __FUNCTION__);
 
+    mdr_flow_table_init();
+
     res = nf_register_net_hooks(&init_net, nf_hooks, ARRAY_SIZE(nf_hooks));
     if (res < 0)
     {
         pr_info("[%s] Failed to register netfilter hooks with errno %d\n", __FUNCTION__, res);
-        return -ENODEV;
+        goto REGISTER_NF_HOOK_FAILED;
     }
 
     return 0;
+
+REGISTER_NF_HOOK_FAILED:
+    mdr_flow_table_exit();
+
+    return -ENODEV;
 }
 
 static void __exit ma_der_exit(void)
 {
     pr_info("[%s] Enter\n", __FUNCTION__);
     nf_unregister_net_hooks(&init_net, nf_hooks, ARRAY_SIZE(nf_hooks));
+    mdr_flow_table_exit();
 }
 
 module_init(ma_der_init);

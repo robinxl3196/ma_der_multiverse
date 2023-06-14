@@ -11,35 +11,6 @@ void mdr_flow_init(struct mdr_flow_info *flow)
     spin_lock_init(&flow->lock);
 }
 
-void mdr_gen_flow_key(struct mdr_flow_key *key, int inet_ver,
-                      u8 *addr0, u8 *addr1, u16 port0, u16 port1, u8 protocol)
-{
-    if (inet_ver != INET_VER_4 && inet_ver != INET_VER_6)
-    {
-        return;
-    }
-
-    if (port0 < port1)
-    {
-        u8 *addr_tmp = addr0;
-        u16 port_tmp = port0;
-
-        addr0 = addr1;
-        addr1 = addr_tmp;
-
-        port0 = port1;
-        port1 = port_tmp;
-    }
-
-    memset(key, 0, sizeof(struct mdr_flow_key));
-    memcpy(key->addr0, addr0, inet_ver == INET_VER_4 ? INET_VER_4 : INET_VER_6);
-    memcpy(key->addr1, addr1, inet_ver == INET_VER_4 ? INET_VER_4 : INET_VER_6);
-    key->port0 = port0;
-    key->port1 = port1;
-    key->protocol = protocol;
-    key->inet_ver = inet_ver;
-}
-
 void mdr_flow_add_pkt_statistic(struct mdr_flow_info *flow, u32 payload_len)
 {
     spin_lock_bh(&flow->lock);
