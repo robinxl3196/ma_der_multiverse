@@ -79,8 +79,13 @@ static u32 decode_ip(struct internet_info *in_info, unsigned char *data, u32 dat
         return 0;
     }
 
+    // check fragment
+    if (data[6] != (1U << 6) || data[7])
+    {
+        return 0;
+    }
+
     // Not checking total length due to the packet may not be linearize
-    // Not checking fragmentation
 
     in_info->protocol = data[9];
     memcpy(&in_info->src_ip, data + 12, IP_ADDR_LEN);
