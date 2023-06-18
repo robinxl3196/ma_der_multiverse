@@ -7,6 +7,7 @@
 #define ETH_HDR_MIN_LEN         14
 #define INTERNET_HDR_MIN_LEN    20
 #define TCP_HDR_MIN_LEN         20
+#define UDP_HDR_MIN_LEN         8
 
 
 /// @brief          Decode ethernet header
@@ -101,7 +102,6 @@ static u32 decode_ip(struct internet_info *in_info, unsigned char *data, u32 dat
 /// @return             Offset of the next header, 0 if failed to parse
 static u32 decode_tcp(struct transport_info *trans_info, unsigned char *data, u32 data_len)
 {
-
     /* RFC 793
         0                   1                   2                   3
         0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -147,6 +147,34 @@ static u32 decode_tcp(struct transport_info *trans_info, unsigned char *data, u3
     return (data[12] >> 4) * 4;
 }
 
+/// @brief              Decode UDP header
+/// @param trans_info   Buffer of results
+/// @param data         Pointer to header start
+/// @param data_len     Available length of data
+/// @return             Offset of the next header, 0 if failed to parse
+static u32 decode_udp(struct transport_info *trans_info, unsigned char *data, u32 data_len)
+{
+    /* RFC 768
+     0      7 8     15 16    23 24    31
+    +--------+--------+--------+--------+
+    |     Source      |   Destination   |
+    |      Port       |      Port       |
+    +--------+--------+--------+--------+
+    |                 |                 |
+    |     Length      |    Checksum     |
+    +--------+--------+--------+--------+
+    */
+    if (data_len < UDP_HDR_MIN_LEN)
+    {
+        return 0;
+    }
+
+    trans_info->src_port = ntohs(*(u16*)data);
+    trans_info->dst_port = ntohs(*(u16*)(data + 2));
+
+    return UDP_HDR_MIN_LEN;
+}
+
 int mdr_decode_packet(struct packet_info *pkt_info, unsigned char *data, u32 data_len)
 {
     u32 next_offset = 0;
@@ -188,6 +216,8 @@ int mdr_decode_packet(struct packet_info *pkt_info, unsigned char *data, u32 dat
     case IPPROTO_TCP:
         next_offset = decode_tcp(&pkt_info->trans_info, data, data_len);
         break;
+    case IPPROTO_UDP:
+        next_offset = decode(udp(&pkt_info->trasn_info, data, data_len));
     default:
         ret = DECODE_TRANSPORT_FAILED;
         goto FINALLY;
